@@ -50,8 +50,13 @@ One tab named Settings. Column A, rows 1-12:
 | A8  | (paste your Form's share link here) |
 | A9  | OFF |
 | A10 | ON |
-| A11 | (leave blank) |
+| A11 | SUM |
 | A12 | (blank, or a logo image URL) |
+| A13 | (blank, or a count-since date like 12/8/2025 for weekly resets) |
+
+A11 recommendation for the template: SUM, so founders can submit as often as
+they like and duplicate rows never appear. See the README's "Multiple
+submissions and weekly resets" section for LATEST/MAX/blank.
 
 Put labels in column B if you like; the board only reads column A.
 

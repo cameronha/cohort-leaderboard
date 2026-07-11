@@ -79,8 +79,41 @@ board.
 | A8  | Submit button URL (your Google Form link; blank hides the button) |
 | A9  | Show "X behind" gap under scores: ON / OFF |
 | A10 | Stack columns on mobile: ON / OFF |
-| A11 | (reserved, leave blank) |
+| A11 | Multiple submissions per team: blank (every submission is its own row), SUM, LATEST, or MAX — see below |
 | A12 | Logo image URL for the footer (optional) |
+| A13 | Count-since date, e.g. `12/8/2025` (optional) — submissions before this date are ignored |
+
+## Multiple submissions and weekly resets
+
+Founders submit the form more than once. Row A11 decides what the board does
+with that:
+
+- **blank** — every submission appears as its own row (original behavior).
+- **SUM** — one row per team, scores added up. Right for cumulative counts
+  like outreach ("submit whenever, it all adds up").
+- **LATEST** — one row per team, most recent submission wins. Right when the
+  form asks for running totals ("what's your revenue so far?").
+- **MAX** — one row per team, best submission wins.
+
+For a weekly reset, put the week's start date in A13 (like `12/8/2025`) and
+change it each Monday. Older submissions stop counting but stay in your
+sheet, so you keep the full history and never delete data.
+
+## Troubleshooting
+
+- **Board not updating?** Google caches published CSVs for ~5 minutes. Wait
+  five, then hard-refresh. The page also re-fetches itself on that interval.
+- **"Could not load leaderboard data"?** One of the two URLs isn't a
+  published-CSV link. Re-do File > Share > Publish to web in each sheet and
+  make sure the copied URL ends in `output=csv`.
+- **No Publish to web option?** Your Google Workspace admin disabled it.
+  Rebuild the two sheets from a personal Google account.
+- **A team shows up twice with different names?** Self-reported names vary
+  ("Acme" vs "acme inc"). Edit the response sheet's name cells so they match;
+  aggregation matches names case-insensitively but not fuzzily.
+- **Renamed a form question mid-cohort?** The column header changes, and the
+  board's column title follows it. Old responses stay in the old column, so
+  avoid renaming questions once submissions exist.
 
 ## Self-hosting (optional)
 

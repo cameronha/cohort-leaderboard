@@ -328,9 +328,15 @@
     // A5 Powered-by text | A6 Powered-by URL
     // A7 Submit button text | A8 Submit button URL (blank = hidden)
     // A9 Show score gap ON/OFF | A10 Stack columns on mobile ON/OFF
-    // A11 reserved (legacy QR row, ignored) | A12 Logo image URL
+    // A11 Aggregation: blank/RAW (every row) | SUM | LATEST | MAX per team
+    //     (unrecognized values fall back to RAW, so legacy sheets are safe)
+    // A12 Logo image URL
+    // A13 Count-since date (e.g. 12/8/2025): rows with an older timestamp
+    //     are ignored. Change this one cell for a weekly reset.
     function parseSettings(rows) {
         const a = i => (rows[i] && rows[i][0] !== undefined ? String(rows[i][0]).trim() : "");
+        const aggRaw = a(10).toUpperCase();
+        const since = a(12) ? new Date(a(12)) : null;
         return {
             title: a(0) || "Cohort Leaderboard",
             dateRange: a(1),
@@ -342,7 +348,9 @@
             formLinkUrl: safeUrl(a(7)),
             showScoreGap: a(8).toUpperCase() === 'ON',
             stackOnMobile: a(9).toUpperCase() === 'ON',
-            logoUrl: safeUrl(a(11))
+            aggregate: ['SUM', 'LATEST', 'MAX'].includes(aggRaw) ? aggRaw : 'RAW',
+            logoUrl: safeUrl(a(11)),
+            sinceDate: (since && !isNaN(since.getTime())) ? since : null
         };
     }
 
@@ -356,11 +364,46 @@
         return title.trim();
     }
 
-    function buildLeaderboards(rows, showScoreGap) {
+    // Group rows by team and reduce each team's submissions to one score.
+    // rowEntries: [{team, score, order}], where order preserves sheet
+    // position (Form responses append chronologically, so a later row is a
+    // later submission even when timestamps are unparseable).
+    function aggregateByTeam(rowEntries, mode) {
+        const byTeam = new Map();
+        rowEntries.forEach(entry => {
+            if (!entry.team) return; // junk/test rows don't aggregate
+            const key = entry.team.toLowerCase();
+            const existing = byTeam.get(key);
+            if (!existing) {
+                byTeam.set(key, { team: entry.team, score: entry.score, order: entry.order });
+                return;
+            }
+            if (mode === 'SUM') {
+                existing.score += entry.score;
+            } else if (mode === 'MAX') {
+                existing.score = Math.max(existing.score, entry.score);
+            } else if (mode === 'LATEST' && entry.order > existing.order) {
+                existing.score = entry.score;
+                existing.order = entry.order;
+            }
+        });
+        return [...byTeam.values()].map(({ team, score }) => ({ team, score }));
+    }
+
+    function buildLeaderboards(rows, settings) {
         if (rows.length < 2) return [];
 
         const headers = rows[0].map(h => String(h));
-        const dataRows = rows.slice(1);
+        let dataRows = rows.slice(1);
+
+        // Count-since filter: drop rows whose timestamp (column A) is older
+        // than the cutoff. Rows with no parseable timestamp are kept.
+        if (settings.sinceDate) {
+            dataRows = dataRows.filter(row => {
+                const ts = new Date(String(row[0] || ''));
+                return isNaN(ts.getTime()) || ts >= settings.sinceDate;
+            });
+        }
 
         const teamNameIndex = headers.findIndex(h => h.toLowerCase().includes('team') || h.toLowerCase().includes('name'));
         const identifierIndex = teamNameIndex !== -1 ? teamNameIndex : 1;
@@ -372,10 +415,17 @@
             if (i === 0 || i === identifierIndex) continue;
             if (!metricName.trim()) continue;
 
-            const sortedData = dataRows.map(row => ({
+            let rowEntries = dataRows.map((row, idx) => ({
                 team: String(row[identifierIndex] || '').trim(),
-                score: parseScore(row[i])
-            }))
+                score: parseScore(row[i]),
+                order: idx
+            }));
+
+            if (settings.aggregate !== 'RAW') {
+                rowEntries = aggregateByTeam(rowEntries, settings.aggregate);
+            }
+
+            const sortedData = rowEntries.map(({ team, score }) => ({ team, score }))
             .sort((a, b) => b.score - a.score)
             .slice(0, 10);
 
@@ -383,7 +433,7 @@
 
             let metricData = sortedData;
 
-            if (showScoreGap && sortedData.length > 0) {
+            if (settings.showScoreGap && sortedData.length > 0) {
                 const topScore = sortedData[0].score;
 
                 metricData = sortedData.map((item, index) => {
@@ -588,7 +638,7 @@
         Promise.all([fetchCsv(config.settings), fetchCsv(config.data)])
             .then(([settingsRows, dataRows]) => {
                 const settings = parseSettings(settingsRows);
-                const leaderboards = buildLeaderboards(dataRows, settings.showScoreGap);
+                const leaderboards = buildLeaderboards(dataRows, settings);
                 renderLeaderboard(settings, leaderboards);
             })
             .catch(err => {
