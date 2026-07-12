@@ -45,8 +45,8 @@ Google Form  →  Google Sheet  →  published CSV  →  this page
   Rename or add metric questions freely; every question after the name
   becomes its own leaderboard.
 - **[Copy the template Settings sheet](https://docs.google.com/spreadsheets/d/1ERtFGoGEOolNR0qk1G7O0xisJzjbQKsIxeCfuum0R64/copy)**.
-  Edit the title and dates, and paste your Form's share link into cell A8
-  (that's what the board's Submit button opens).
+  Edit the title and dates, and paste your Form's share link into the
+  "Submit button URL" row (that's what the board's Submit button opens).
 
 Prefer to build from scratch? Everything the templates contain is documented
 in [docs/template-sheet-setup.md](docs/template-sheet-setup.md).
@@ -70,28 +70,35 @@ Go to the **[leaderboard builder](https://cohort-leaderboard.netlify.app/make.ht
 paste the two URLs, done. Bookmark the link it gives you; that's your live
 board.
 
-## Settings sheet reference (column A, one value per row)
+## Settings sheet reference
 
-| Row | Value |
+Each row names a setting in column A; your value goes in column B. Row
+order doesn't matter, and rows the board doesn't recognize (headers, notes,
+spacers) are ignored, so you can't break it by rearranging.
+
+| Setting (column A) | Your value (column B) |
 |-----|-------|
-| A1  | Board title |
-| A2  | Date range / week label |
-| A3  | Explainer text (appears after the date in the subtitle) |
-| A4  | Disclaimer (footer small print) |
-| A5  | "Powered by" text (blank = a small Cohort Leaderboard credit) |
-| A6  | "Powered by" link URL |
-| A7  | Submit button text (e.g. "Submit Updates") |
-| A8  | Submit button URL (your Google Form link; blank hides the button) |
-| A9  | Show "X behind" gap under scores: ON / OFF |
-| A10 | Stack columns on mobile: ON / OFF |
-| A11 | Multiple submissions per team: blank (every submission is its own row), SUM, LATEST, or MAX — see below |
-| A12 | Logo image URL for the footer (optional) |
-| A13 | Count-since date, e.g. `12/8/2025` (optional) — submissions before this date are ignored |
+| Title | Board title, the big headline |
+| Date range | Week label, shows in the subtitle |
+| Explainer | Text after the date in the subtitle |
+| Disclaimer | Footer small print |
+| Powered by text | Blank shows a small Cohort Leaderboard credit |
+| Powered by URL | Where the powered-by text/logo links |
+| Submit button text | e.g. "Submit Updates" |
+| Submit button URL | Your Google Form link; blank hides the button |
+| Show score gap | ON shows "X behind" under scores |
+| Stack on mobile | ON = one column on phones |
+| Multiple submissions | blank (every submission is its own row), SUM, LATEST, or MAX — see below |
+| Logo URL | Footer logo image (optional) |
+| Count since | e.g. `12/8/2025` — older submissions are ignored (optional) |
+
+(The older column-A-by-row-number format from earlier versions still works;
+the board auto-detects which one you're using.)
 
 ## Multiple submissions and weekly resets
 
-Founders submit the form more than once. Row A11 decides what the board does
-with that:
+Founders submit the form more than once. The "Multiple submissions" setting
+decides what the board does with that:
 
 - **blank** — every submission appears as its own row (original behavior).
 - **SUM** — one row per team, scores added up. Right for cumulative counts
@@ -100,8 +107,8 @@ with that:
   form asks for running totals ("what's your revenue so far?").
 - **MAX** — one row per team, best submission wins.
 
-For a weekly reset, put the week's start date in A13 (like `12/8/2025`) and
-change it each Monday. Older submissions stop counting but stay in your
+For a weekly reset, put the week's start date in the "Count since" row
+(like `12/8/2025`) and change it each Monday. Older submissions stop counting but stay in your
 sheet, so you keep the full history and never delete data.
 
 ## Troubleshooting

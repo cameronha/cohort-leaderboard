@@ -65,24 +65,47 @@ eq(lib.safeUrl('https://ok.example'), 'https://ok.example', 'safeUrl allows http
 eq(lib.safeSheetUrl('https://evil.example/x'), '', 'safeSheetUrl blocks non-Google');
 eq(lib.safeSheetUrl('https://docs.google.com/spreadsheets/d/e/X/pub?output=csv'), 'https://docs.google.com/spreadsheets/d/e/X/pub?output=csv', 'safeSheetUrl allows published sheet');
 
-// --- parseSettings row mapping (col A by row number) ---
+// --- parseSettings: legacy positional format (col A by row number) ---
 const settingsRows = [
-    ['Title'], ['Dates'], ['Explainer'], ['Disc'],
-    ['PBText'], ['https://pb.example'], ['BtnText'], ['https://form.example'],
+    ['Jumpstart Program Leaderboard'], ['Data Period: Dec 2 - Dec 9'], ['Resets Mondays'], ['All self-reported.'],
+    ['Powered by Actionworks'], ['https://pb.example'], ['Submit updates here'], ['https://form.example'],
     ['ON'], ['OFF'], ['SUM'], ['https://logo.example/l.png'], ['12/8/2025']
 ];
 const s = lib.parseSettings(settingsRows);
-eq(s.title, 'Title', 'settings A1 title');
-eq(s.poweredByText, 'PBText', 'settings A5 powered-by');
-eq(s.formLinkUrl, 'https://form.example', 'settings A8 form url');
-eq(s.showScoreGap, true, 'settings A9 gap ON');
-eq(s.stackOnMobile, false, 'settings A10 stack OFF');
-eq(s.aggregate, 'SUM', 'settings A11 aggregate');
-eq(s.logoUrl, 'https://logo.example/l.png', 'settings A12 logo');
-eq(s.sinceDate instanceof Date && !isNaN(s.sinceDate), true, 'settings A13 since date parses');
+eq(s.title, 'Jumpstart Program Leaderboard', 'positional A1 title');
+eq(s.poweredByText, 'Powered by Actionworks', 'positional A5 powered-by');
+eq(s.formLinkUrl, 'https://form.example', 'positional A8 form url');
+eq(s.showScoreGap, true, 'positional A9 gap ON');
+eq(s.stackOnMobile, false, 'positional A10 stack OFF');
+eq(s.aggregate, 'SUM', 'positional A11 aggregate');
+eq(s.logoUrl, 'https://logo.example/l.png', 'positional A12 logo');
+eq(s.sinceDate instanceof Date && !isNaN(s.sinceDate), true, 'positional A13 since date parses');
 // Legacy sheet: QR URL in A11 falls back to RAW
 const legacy = lib.parseSettings([['T'],[''],[''],[''],[''],[''],[''],[''],[''],[''],['https://raw.githubusercontent.com/qr.png']]);
-eq(legacy.aggregate, 'RAW', 'settings legacy A11 URL -> RAW');
+eq(legacy.aggregate, 'RAW', 'positional legacy A11 URL -> RAW');
+
+// --- parseSettings: named format (setting name in A, value in B) ---
+const namedRows = [
+    ['What it controls', '👉 Your input (edit this column)', 'Notes'],   // header row: ignored
+    ['Date range', 'Week 2 of 8', 'shows in subtitle'],                  // order scrambled on purpose
+    ['Title', 'EDO Cohort Board', 'the headline'],
+    [''], // spacer
+    ['Submit button URL', 'https://forms.gle/xyz', ''],
+    ['Submit button text', 'Report progress', ''],
+    ['Multiple submissions', 'latest', 'sum/latest/max'],                // case-insensitive value
+    ['Show score gap', 'on', ''],
+    ['Your board link', 'https://cohort-leaderboard.netlify.app/?x=1', 'storage only'], // unknown: ignored
+    ['Count since', '12/8/2025', '']
+];
+const n = lib.parseSettings(namedRows);
+eq(n.title, 'EDO Cohort Board', 'named title, order-independent');
+eq(n.dateRange, 'Week 2 of 8', 'named date range');
+eq(n.formLinkUrl, 'https://forms.gle/xyz', 'named submit url');
+eq(n.formLinkText, 'Report progress', 'named submit text');
+eq(n.aggregate, 'LATEST', 'named aggregate, case-insensitive');
+eq(n.showScoreGap, true, 'named gap on, case-insensitive');
+eq(n.sinceDate instanceof Date && !isNaN(n.sinceDate), true, 'named count-since parses');
+eq(n.poweredByText, '', 'named absent powered-by defaults empty');
 
 // --- aggregateByTeam ---
 const entries = [

@@ -323,35 +323,82 @@
         return parseFloat(s) || 0;
     }
 
-    // Settings tab layout (values in column A):
-    // A1 Title | A2 Date Range | A3 Explainer | A4 Disclaimer
-    // A5 Powered-by text | A6 Powered-by URL
-    // A7 Submit button text | A8 Submit button URL (blank = hidden)
-    // A9 Show score gap ON/OFF | A10 Stack columns on mobile ON/OFF
-    // A11 Aggregation: blank/RAW (every row) | SUM | LATEST | MAX per team
-    //     (unrecognized values fall back to RAW, so legacy sheets are safe)
-    // A12 Logo image URL
-    // A13 Count-since date (e.g. 12/8/2025): rows with an older timestamp
-    //     are ignored. Change this one cell for a weekly reset.
-    function parseSettings(rows) {
-        const a = i => (rows[i] && rows[i][0] !== undefined ? String(rows[i][0]).trim() : "");
-        const aggRaw = a(10).toUpperCase();
-        const since = a(12) ? new Date(a(12)) : null;
+    // Settings sheet, named format (preferred): column A names the setting,
+    // column B holds the value, anything else is ignored. Rows match by
+    // normalized name, so order doesn't matter and unknown rows (headers,
+    // notes, spacers) are harmless.
+    //
+    // Recognized settings (aliases in SETTING_KEYS):
+    // Title | Date range | Explainer | Disclaimer | Powered by text |
+    // Powered by URL | Submit button text | Submit button URL |
+    // Show score gap (ON/OFF) | Stack on mobile (ON/OFF) |
+    // Multiple submissions (blank/RAW | SUM | LATEST | MAX) |
+    // Logo URL | Count since (date; older submissions ignored)
+    //
+    // Legacy positional format (values in column A, meaning by row number
+    // A1-A13) is auto-detected and still supported.
+    const SETTING_KEYS = {
+        title: 'title',
+        daterange: 'dateRange', dates: 'dateRange', datelabel: 'dateRange',
+        explainer: 'explainerText', explainertext: 'explainerText',
+        disclaimer: 'disclaimer',
+        poweredbytext: 'poweredByText', poweredby: 'poweredByText',
+        poweredbyurl: 'poweredByUrl', poweredbylink: 'poweredByUrl',
+        submitbuttontext: 'formLinkText', buttontext: 'formLinkText',
+        submitbuttonurl: 'formLinkUrl', formlink: 'formLinkUrl', formurl: 'formLinkUrl',
+        showscoregap: 'showScoreGap', scoregap: 'showScoreGap',
+        stackonmobile: 'stackOnMobile',
+        multiplesubmissions: 'aggregate', aggregation: 'aggregate',
+        logourl: 'logoUrl', logo: 'logoUrl',
+        countsince: 'sinceDate', countsincedate: 'sinceDate', sincedate: 'sinceDate'
+    };
+
+    function normalizeKey(text) {
+        return String(text || '').toLowerCase().replace(/[^a-z]/g, '');
+    }
+
+    function finishSettings(raw) {
+        const aggRaw = String(raw.aggregate || '').toUpperCase();
+        const since = raw.sinceDate ? new Date(raw.sinceDate) : null;
         return {
-            title: a(0) || "Cohort Leaderboard",
-            dateRange: a(1),
-            explainerText: a(2),
-            disclaimer: a(3),
-            poweredByText: a(4),
-            poweredByUrl: safeUrl(a(5)),
-            formLinkText: a(6),
-            formLinkUrl: safeUrl(a(7)),
-            showScoreGap: a(8).toUpperCase() === 'ON',
-            stackOnMobile: a(9).toUpperCase() === 'ON',
+            title: raw.title || "Cohort Leaderboard",
+            dateRange: raw.dateRange || "",
+            explainerText: raw.explainerText || "",
+            disclaimer: raw.disclaimer || "",
+            poweredByText: raw.poweredByText || "",
+            poweredByUrl: safeUrl(raw.poweredByUrl),
+            formLinkText: raw.formLinkText || "",
+            formLinkUrl: safeUrl(raw.formLinkUrl),
+            showScoreGap: String(raw.showScoreGap || '').toUpperCase() === 'ON',
+            stackOnMobile: String(raw.stackOnMobile || '').toUpperCase() === 'ON',
             aggregate: ['SUM', 'LATEST', 'MAX'].includes(aggRaw) ? aggRaw : 'RAW',
-            logoUrl: safeUrl(a(11)),
+            logoUrl: safeUrl(raw.logoUrl),
             sinceDate: (since && !isNaN(since.getTime())) ? since : null
         };
+    }
+
+    function parseSettings(rows) {
+        // Named format: rows whose column-A text matches a known setting name.
+        const named = {};
+        let namedCount = 0;
+        rows.forEach(row => {
+            const field = SETTING_KEYS[normalizeKey(row && row[0])];
+            if (field && !(field in named)) {
+                named[field] = String((row && row[1]) || '').trim();
+                namedCount++;
+            }
+        });
+        if (namedCount >= 2) return finishSettings(named);
+
+        // Legacy positional format: values in column A, meaning by row number.
+        const a = i => (rows[i] && rows[i][0] !== undefined ? String(rows[i][0]).trim() : "");
+        return finishSettings({
+            title: a(0), dateRange: a(1), explainerText: a(2), disclaimer: a(3),
+            poweredByText: a(4), poweredByUrl: a(5),
+            formLinkText: a(6), formLinkUrl: a(7),
+            showScoreGap: a(8), stackOnMobile: a(9),
+            aggregate: a(10), logoUrl: a(11), sinceDate: a(12)
+        });
     }
 
     // Form-question headers can be long ("📞 Outreach Made (DMs, emails...)"
