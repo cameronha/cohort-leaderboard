@@ -1,10 +1,12 @@
 # Template Form + Settings sheet (operator setup)
 
-This documents the exact template contents. Cam: create these once in your
-Google account, set sharing to "Anyone with the link can view," and replace
-the TODO links below with the real template links.
+This documents the template contents, for anyone who prefers building from
+scratch or wants to know what the templates contain.
 
-> Template Form: **[TODO: link]** · Template Settings sheet: **[TODO: link]**
+> Copy the templates directly:
+> **[Template Form](https://docs.google.com/forms/d/17q-DL4U1WSOZMjLW-1eFvITgf3WCB2dZmNdtcMeoSps/copy)** ·
+> **[Template Settings sheet](https://docs.google.com/spreadsheets/d/1ERtFGoGEOolNR0qk1G7O0xisJzjbQKsIxeCfuum0R64/copy)**
+> (each link opens a "Make a copy" prompt; sign in to Google if asked)
 
 ## Why two documents
 
@@ -66,10 +68,10 @@ Put labels in column B if you like; the board only reads column A.
 
 ## Operator steps (what the copy flow looks like)
 
-1. Open the template Form → ⋮ menu → **Make a copy**.
+1. Click the **Template Form copy link** above → Make a copy.
 2. In your copy: Responses tab → **Link to Sheets** → creates your response
    spreadsheet.
-3. Open the template Settings sheet → **File > Make a copy**.
+3. Click the **Template Settings sheet copy link** above → Make a copy.
 4. Edit your Settings copy: title, dates, and paste your Form's "Send" link
    into A8.
 5. Publish both as CSV (File > Share > Publish to web; pick the

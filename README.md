@@ -37,14 +37,19 @@ Google Form  →  Google Sheet  →  published CSV  →  this page
 
 ## Quickstart (no code, ~20 minutes)
 
-### 1. Create your Form and Settings sheet
+### 1. Copy the two templates
 
-- Make a Google Form with a name question ("Your name or your company's
-  name") plus one question per metric you want to track. Number answers work
-  best. Under Responses, link it to a spreadsheet.
-- Make a second, one-tab spreadsheet called Settings and fill column A per
-  the table below (or copy the template linked in
-  [docs/template-sheet-setup.md](docs/template-sheet-setup.md)).
+- **[Copy the template Form](https://docs.google.com/forms/d/17q-DL4U1WSOZMjLW-1eFvITgf3WCB2dZmNdtcMeoSps/copy)**
+  (sign in to Google if asked). Then, in your copy, open the Responses tab
+  and click **Link to Sheets**: that creates your response spreadsheet.
+  Rename or add metric questions freely; every question after the name
+  becomes its own leaderboard.
+- **[Copy the template Settings sheet](https://docs.google.com/spreadsheets/d/1ERtFGoGEOolNR0qk1G7O0xisJzjbQKsIxeCfuum0R64/copy)**.
+  Edit the title and dates, and paste your Form's share link into cell A8
+  (that's what the board's Submit button opens).
+
+Prefer to build from scratch? Everything the templates contain is documented
+in [docs/template-sheet-setup.md](docs/template-sheet-setup.md).
 
 Running a university program or anywhere real names are sensitive? Tell
 participants to enter a company name or handle. The board shows whatever
