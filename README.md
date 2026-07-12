@@ -40,8 +40,10 @@ Google Form  →  Google Sheet  →  published CSV  →  this page
 ### 1. Copy the two templates
 
 - **[Copy the template Form](https://docs.google.com/forms/d/17q-DL4U1WSOZMjLW-1eFvITgf3WCB2dZmNdtcMeoSps/copy)**
-  (sign in to Google if asked). Then, in your copy, open the Responses tab
-  and click **Link to Sheets**: that creates your response spreadsheet.
+  (sign in to Google if asked). Then, in your copy: click **Publish** (top
+  right; copies arrive unpublished and can't accept submissions until you
+  do), then open the Responses tab and click **Link to Sheets** to create
+  your response spreadsheet.
   Rename or add metric questions freely; every question after the name
   becomes its own leaderboard.
 - **[Copy the template Settings sheet](https://docs.google.com/spreadsheets/d/1ERtFGoGEOolNR0qk1G7O0xisJzjbQKsIxeCfuum0R64/copy)**.

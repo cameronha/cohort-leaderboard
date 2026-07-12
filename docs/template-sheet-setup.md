@@ -79,8 +79,10 @@ edit." Notes never appear in the published CSV.
 ## Operator steps (what the copy flow looks like)
 
 1. Click the **Template Form copy link** above → Make a copy.
-2. In your copy: Responses tab → **Link to Sheets** → creates your response
-   spreadsheet.
+2. In your copy, click **Publish** (top right; keep "anyone with the link"
+   as responders). Copies arrive unpublished, and founders can't submit
+   until you do this.
+3. Responses tab → **Link to Sheets** → creates your response spreadsheet.
 3. Click the **Template Settings sheet copy link** above → Make a copy.
 4. Edit your Settings copy: title, dates, and paste your Form's "Send" link
    into the "Submit button URL" row.
