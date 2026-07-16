@@ -247,7 +247,8 @@
     //   3. ?demo=1 (bundled sample data)
     // ============================================================
     const REFRESH_MINUTES = 5;
-    const DEFAULT_CREDIT_URL = "https://github.com/cameronha/cohort-leaderboard";
+    const DEFAULT_CREDIT_URL = "make.html";
+    const SETUP_GUIDE_URL = "https://github.com/cameronha/cohort-leaderboard";
 
     function escapeHtml(value) {
         return String(value)
@@ -290,6 +291,7 @@
         // recommended values, applied unless the link says otherwise.
         if (!('stackOnMobile' in raw)) raw.stackOnMobile = 'ON';
         if (!('aggregate' in raw)) raw.aggregate = 'SUM';
+        if (!('disclaimer' in raw)) raw.disclaimer = 'Disclaimer: All numbers are self-reported. The point of this leaderboard is motivation and community. Awards and recognition are at the discretion of the program organizers.';
         return finishSettings(raw);
     }
 
@@ -732,7 +734,7 @@
             showMessage('No leaderboard here yet.',
                 'See what one looks like: <a href="?demo=1">view the demo</a>.<br>' +
                 'Ready to make yours? Use the <a href="make.html">leaderboard builder</a> ' +
-                '(free, about 10 minutes), or see the <a href="' + DEFAULT_CREDIT_URL + '" target="_blank" rel="noopener">setup guide</a>.');
+                '(free, about 10 minutes), or see the <a href="' + SETUP_GUIDE_URL + '" target="_blank" rel="noopener">setup guide</a>.');
             return;
         }
         loadAndRender(config);
