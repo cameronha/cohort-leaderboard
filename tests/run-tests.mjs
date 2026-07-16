@@ -24,7 +24,7 @@ function evalWithStubs(code) {
         'parseScore', 'cleanMetricTitle', 'parseSettings', 'aggregateByTeam',
         'buildLeaderboards', 'safeUrl', 'safeSheetUrl', 'escapeHtml',
         'normalizeSheetUrl', 'isSheetCsvUrl', 'paramsToSettings',
-        'isFormLink', 'classifyDataCsv'
+        'isFormLink', 'classifyDataCsv', 'parseCsvHeader'
     ];
     const collector = `;return ({${names.map(n => `${n}: typeof ${n} !== 'undefined' ? ${n} : undefined`).join(',')}})`;
     const fn = new Function(...Object.keys(sandbox), code + collector);
@@ -178,6 +178,11 @@ eq(makeLib.classifyDataCsv('What it controls,👉 Your input (edit this column),
 eq(makeLib.classifyDataCsv('Timestamp,Team Name,Outreach,Revenue\n1,2,3,4'), 'ok', 'classify accepts responses header');
 eq(makeLib.classifyDataCsv('Timestamp,Your name (or company),Outreach\n1,2,3'), 'ok', 'classify accepts name variant');
 eq(makeLib.classifyDataCsv('Week,Amount,Total\n1,2,3'), 'no-name-column', 'classify flags missing name column');
+eq(makeLib.classifyDataCsv('Timestamp,Team Name\n11/24/2025,Open AI'), 'no-metric-columns', 'classify flags sheet with no score columns');
+eq(makeLib.classifyDataCsv('Timestamp,Team Name,,\n11/24/2025,Open AI,,'), 'no-metric-columns', 'classify flags blank-only metric headers');
+eq(makeLib.classifyDataCsv('Timestamp,Team,Revenue\n1,2,3'), 'ok', 'classify accepts team column without the word name');
+eq(makeLib.classifyDataCsv('Timestamp,Team Name,"📞 Outreach Made (DMs, emails)"\n1,2,3'), 'ok', 'classify handles quoted header with commas');
+eq(makeLib.parseCsvHeader('a,"b,c","d""e"'), ['a', 'b,c', 'd"e'], 'parseCsvHeader handles quotes and escaped quotes');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

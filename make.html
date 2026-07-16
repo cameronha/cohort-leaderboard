@@ -206,12 +206,41 @@
         return url;
     }
 
-    // The data feed must be the FORM RESPONSES sheet. Recognize the two
-    // classic mix-ups by looking at the published content itself.
+    // Parse one CSV line respecting quotes (form-question headers can
+    // contain commas, e.g. "Outreach Made (DMs, emails)").
+    function parseCsvHeader(line) {
+        const fields = [];
+        let cur = '', inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (inQuotes) {
+                if (ch === '"') {
+                    if (line[i + 1] === '"') { cur += '"'; i++; }
+                    else inQuotes = false;
+                } else cur += ch;
+            } else if (ch === '"') {
+                inQuotes = true;
+            } else if (ch === ',') {
+                fields.push(cur); cur = '';
+            } else cur += ch;
+        }
+        fields.push(cur);
+        return fields;
+    }
+
+    // The data feed must be the FORM RESPONSES sheet. Recognize the three
+    // classic mix-ups by looking at the published content itself. Mirrors
+    // the board's column logic: col 0 is the timestamp, the team/name
+    // column is the identifier, every other non-blank header is a metric.
     function classifyDataCsv(text) {
-        const firstLine = (text || '').split('\n')[0].toLowerCase();
-        if (firstLine.includes('what it controls')) return 'settings-sheet';
-        if (!firstLine.includes('name')) return 'no-name-column';
+        const firstLine = (text || '').split('\n')[0].replace(/\r$/, '');
+        const headers = parseCsvHeader(firstLine);
+        const lower = headers.map(h => h.toLowerCase());
+        if (lower.some(h => h.includes('what it controls'))) return 'settings-sheet';
+        const identifierIndex = lower.findIndex(h => h.includes('team') || h.includes('name'));
+        if (identifierIndex === -1) return 'no-name-column';
+        const hasMetric = headers.some((h, i) => i !== 0 && i !== identifierIndex && h.trim() !== '');
+        if (!hasMetric) return 'no-metric-columns';
         return 'ok';
     }
 
@@ -261,7 +290,11 @@
             return;
         }
         if (kind === 'no-name-column') {
-            fail('That spreadsheet doesn\'t look like form responses (no name column in the first row). Publish the Form Responses 1 tab of the spreadsheet your form created, and make sure the first dropdown isn\'t set to Entire Document.');
+            fail('That spreadsheet doesn\'t look like form responses (no team or name column in the first row). Publish the Form Responses 1 tab of the spreadsheet your form created, and make sure the first dropdown isn\'t set to Entire Document.');
+            return;
+        }
+        if (kind === 'no-metric-columns') {
+            fail('That spreadsheet has a name column but no score columns to rank. It\'s probably the responses sheet of a different form. Publish the responses spreadsheet of the form your participants will actually use; its first row should include your metric questions (revenue, outreach, and so on).');
             return;
         }
 
