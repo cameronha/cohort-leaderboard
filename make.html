@@ -34,28 +34,34 @@
         .lede { font-size: 17px; color: var(--color-dark-gray); margin-bottom: 28px; line-height: 1.5; }
         .lede a { color: var(--color-accent); font-weight: 600; }
         .triptych {
-            --tw: min(1080px, calc(100vw - 32px));
+            --tw: min(1280px, calc(100vw - 32px));
             width: var(--tw);
             margin-left: calc((100% - var(--tw)) / 2);
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            gap: 18px;
             margin-bottom: 28px;
         }
-        .triptych figure { margin: 0; }
+        .triptych figure {
+            margin: 0;
+            background: white;
+            border: 1px solid #e3e7ea;
+            border-radius: 14px;
+            padding: 10px 10px 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
         .triptych img {
             display: block;
             width: 100%;
-            border: 2px solid var(--color-light-gray);
-            border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+            border: 1px solid var(--color-light-gray);
+            border-radius: 8px;
         }
         .triptych figcaption {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--color-darker-gray);
             text-align: center;
-            margin-top: 7px;
+            margin-top: 9px;
             line-height: 1.4;
         }
         @media (max-width: 600px) {
