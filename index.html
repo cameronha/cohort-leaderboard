@@ -98,6 +98,41 @@
             font-weight: 600;
         }
 
+        .landing { max-width: 720px; margin: 0 auto; }
+        .landing .cta-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 26px;
+        }
+        .landing-cta {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 16px;
+            background: var(--color-accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(81, 147, 189, 0.4);
+            transition: background 0.2s;
+        }
+        .landing-cta:hover { background: var(--color-navy); }
+        .landing-cta.secondary {
+            background: white;
+            color: var(--color-accent);
+            border: 2px solid var(--color-accent);
+            box-shadow: none;
+        }
+        .landing-cta.secondary:hover { background: var(--color-light-gray); }
+        .landing-shot {
+            display: block;
+            width: 100%;
+            border: 2px solid #dfe3e6;
+            border-radius: 12px;
+        }
+
         .leaderboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -730,11 +765,23 @@
         const config = resolveConfig();
         if (!config) {
             document.getElementById('main-title').textContent = 'Cohort Leaderboard';
-            document.getElementById('subtitle-text').textContent = 'Turn a Google Sheet into a live leaderboard for your program.';
-            showMessage('No leaderboard here yet.',
-                'See what one looks like: <a href="?demo=1">view the demo</a>.<br>' +
-                'Ready to make yours? Use the <a href="make.html">leaderboard builder</a> ' +
-                '(free, about 10 minutes), or see the <a href="' + SETUP_GUIDE_URL + '" target="_blank" rel="noopener">setup guide</a>.');
+            document.getElementById('subtitle-text').textContent = 'Turn a Google Form into a live leaderboard for your program.';
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            loading.innerHTML =
+                '<div class="landing">' +
+                    '<div class="cta-row">' +
+                        '<a class="landing-cta" href="make.html">Make your own (free, about 10 minutes)</a>' +
+                        '<a class="landing-cta secondary" href="?demo=1">See the live demo</a>' +
+                    '</div>' +
+                    '<a href="?demo=1"><img class="landing-shot" src="assets/demo-board.png" ' +
+                        'alt="A demo cohort leaderboard: two ranked columns, Top Earner and Outreach Leader, with medals for the top three teams"></a>' +
+                    '<div class="setup-note">Participants submit a Google Form; the board updates itself. ' +
+                    'Technical? <a href="' + SETUP_GUIDE_URL + '" target="_blank" rel="noopener">Setup guide and source on GitHub</a>.</div>' +
+                '</div>';
+            document.getElementById('leaderboard-grid').style.display = 'none';
+            document.getElementById('powered-by-section').innerHTML =
+                '<span class="powered-by-text">Made with <a href="' + DEFAULT_CREDIT_URL + '" target="_blank" rel="noopener">Cohort Leaderboard</a></span>';
             return;
         }
         loadAndRender(config);
