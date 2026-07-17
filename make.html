@@ -33,12 +33,29 @@
         h1 { font-size: 34px; font-weight: 800; color: var(--color-dark-text); margin-bottom: 10px; }
         .lede { font-size: 17px; color: var(--color-dark-gray); margin-bottom: 28px; line-height: 1.5; }
         .lede a { color: var(--color-accent); font-weight: 600; }
-        .hero-shot {
+        .triptych {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .triptych figure { margin: 0; }
+        .triptych img {
             display: block;
             width: 100%;
             border: 2px solid var(--color-light-gray);
-            border-radius: 12px;
-            margin-bottom: 28px;
+            border-radius: 10px;
+        }
+        .triptych figcaption {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-darker-gray);
+            text-align: center;
+            margin-top: 7px;
+            line-height: 1.4;
+        }
+        @media (max-width: 600px) {
+            .triptych { grid-template-columns: 1fr; }
         }
         .steps-box {
             background: var(--color-light-gray);
@@ -132,8 +149,25 @@
             submit into a live scoreboard. Free, nothing to install.
             Never seen one? <a href="index.html?demo=1">View the demo</a>.</p>
 
-        <a href="index.html?demo=1"><img class="hero-shot" src="assets/demo-board.png"
-            alt="A cohort leaderboard: two ranked columns, Top Earner and Outreach Leader, with medals for the top three teams"></a>
+        <div class="triptych">
+            <figure>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScWjcTB5GzYMFWU4bY78_ZfWKcc-wqP4SHM5XYulvq_JatvIA/viewform" target="_blank" rel="noopener"><img
+                    src="assets/triptych-form.png"
+                    alt="A Google Form titled Cohort Leaderboard: Demo Form with name, revenue, and outreach questions"></a>
+                <figcaption>1. You send the form to your participants</figcaption>
+            </figure>
+            <figure>
+                <img src="assets/triptych-sheet.png"
+                    alt="A Google Sheet with form responses landing as rows: names, revenue, and outreach numbers">
+                <figcaption>2. Entries land in a Google Sheet, automatically</figcaption>
+            </figure>
+            <figure>
+                <a href="index.html?demo=1"><img
+                    src="assets/triptych-board.png"
+                    alt="A live cohort leaderboard ranking teams by revenue and outreach, with medals for the top three"></a>
+                <figcaption>3. The leaderboard updates itself</figcaption>
+            </figure>
+        </div>
 
         <div class="steps-box">
             <h2>First, three steps in Google (about 10 minutes):</h2>
