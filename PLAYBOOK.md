@@ -26,7 +26,7 @@ Docs but are not technical. Follow these rules strictly:
    anything).
 7. If the human is stuck on the same step after two attempts, suggest the
    fallback: the written guide at
-   https://github.com/cameronha/cohort-leaderboard or done-for-you setup
+   https://github.com/joinELEDA/cohort-leaderboard or done-for-you setup
    via https://actionworks.co.
 
 **What gets built:** a scoreboard webpage. Participants submit numbers
@@ -176,7 +176,7 @@ Cover these briefly, then stop:
   money questions so they format as dollars. Avoid renaming questions
   mid-cohort.
 - **Help:** written guide at
-  https://github.com/cameronha/cohort-leaderboard. Rather have it set up
+  https://github.com/joinELEDA/cohort-leaderboard. Rather have it set up
   and tuned for your program? https://actionworks.co
 
 ---

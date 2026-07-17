@@ -136,7 +136,7 @@ sheet, so you keep the full history and never delete data.
 The hosted builder needs no account at all. If you'd rather run it on your
 own domain:
 
-1. [Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/cameronha/cohort-leaderboard)
+1. [Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/joinELEDA/cohort-leaderboard)
    (free tier is plenty), or drag this folder onto https://app.netlify.com/drop.
 2. Copy `config.example.js` to `config.js`, paste your two published-CSV
    URLs, redeploy. With `config.js` set, the deployment serves only your
